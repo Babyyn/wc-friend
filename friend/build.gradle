@@ -42,7 +42,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.0.2'
 
-    if (isLibModule) {
+    if (integrate) {
         implementation project(path: ':baselib')
         implementation project(path: ':friend_api')
         implementation project(path: ':profile_api')
