@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.ccf.wc.baselib.core.FriendConstants
@@ -13,7 +16,20 @@ import com.ccf.wc.baselib.ui.Constants
 import kotlinx.android.synthetic.main.fragment_friend.*
 
 @Route(path = FriendConstants.ENTRY_FRAGMENT)
-class FriendFragment: Fragment() {
+class FriendFragment : Fragment() {
+
+    companion object {
+        private const val TAG = "FriendFragment"
+    }
+
+    private val adapter = FriendListAdapter()
+    lateinit var vm: FriendMainViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vm = ViewModelProviders.of(this).get(FriendMainViewModel::class.java)
+        vm.loadFriends()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,5 +46,12 @@ class FriendFragment: Fragment() {
                 .navigation() as DialogFragment
             fragment.show(childFragmentManager, "")
         }
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.adapter = adapter
+        vm.friends.observe(this, Observer {
+            it?.let {
+                adapter.submitList(it)
+            }
+        })
     }
 }
